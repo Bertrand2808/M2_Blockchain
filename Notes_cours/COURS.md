@@ -62,5 +62,46 @@ Donc un changement de hash dans un bloc entraine un changement de hash dans tous
 
 Concrètement le hash est un moyen de vérifier l'intégrité des données. Le système est donc fait pour s'auto-gérer pour éviter ce genre de problème.
 
+### Méthode de consensus
 
+Consensus : Toutes les blockchain ont un algorithm de consensus qui décide si oui ou non une chaine de données sera intégrée au prochain bloc. 
+
+Par exemple : Un vendeur propose un bien sur la blockchain et deux acheteurs veulent l'acheter. Comment le réseau peut-il décider qui a acheté en premier ? 
+Pire, comment empêcher de dire au vendeur que les deux ont acheté le bien et d'encaisser deux fois ?
+
+Le but est de trouver un moyen de déterminer comment les transactions sont choisies et ordonnées afin d'avoir un seul état de la blockchain. 
+En d'autres termes, il faut trouver un moyen d'`établir un consensus sur les blocs qui sont ajoutés à la chaine`. 
+
+#### Algorithme proof of work : 
+
+Beaucoup de blockchains publiques comme Bitcoin ou Ethereum utilisent cet algorithme de consensus connu sous le nom de `proof of work`. Une preuve de travail c'est une preuve cryptographique que la transaction a bien été validée. Les noeuds qui remplissent ce rôle sont appelés les `mineurs`.
+
+Concrètement le premier mineur qui va arrivé à trouver la preuve de travail va pouvoir ajouter le bloc à la blockchain.
+
+Ce mécanisme est assez simple, l'identifiant de chaque bloc dans la chaine est un hash qui inclut l'identifiant du bloc précédent, toutes les transactions du bloc et un `nonce`. Donc pour ajouter un bloc à la chaine, il faut trouver un hash qui commence par un certain nombre de zéros.
+Comme il n'est pas possible de prédir à quoi ressemblera un hash, un mineur ne peut que tenter de cacluler le hash du bloc en modifiant la valeur du nonce jusqu'à ce qu'il obtienne un hash qui corresponde aux critères du futur bloc.
+
+Sachant que le nonce n'est pas fixe, il faut le rechercher pour chaque bloc. C'est là que les mineurs entrent en courses pour résoudre le puzzle. 
+
+## Bitcoin 
+
+### Présentation 
+
+Jusqu'à maintenant, nous avons décrit la blockchain en tant que base de données publique, mais nous n'avons pas encore parlé de ce que nous pouvons y stocker.
+
+Bitcoin : première application de la blockchain.
+
+Bitcoin est une monnaie numérique qui permet de faire des transactions sans passer par une banque, sans autorité de contrôle. 
+
+Voir pdf pour plus de détails.
+
+## Ethereum
+
+### Présentation
+
+Ethereum est une plateforme open-source de blockchain qui permet de créer des contrats intelligents (smart contracts). Elle a été présdentée en 2013 et lancée en 2015 par Vitalik Buterin.
+
+Sa principale particularité est la possibilité d'y `déployer du code qui pourra être exécuté dans la blockchain sous forme de smart contracts`.
+
+Un smart contract est un court programme écrit dans la blockchain lors d'une transaction et qui peuvent réagir aux transactions qui lui sont envoyées en exécutant une logique arbitraire. Chaque smart contract a également son propre état arbitraire qui peut être mis à jour sur n'importe quelle transaction et peut contenir n'importe quelle donnée. 
 
