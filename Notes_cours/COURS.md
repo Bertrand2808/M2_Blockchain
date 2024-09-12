@@ -105,3 +105,103 @@ Sa principale particularité est la possibilité d'y `déployer du code qui pour
 
 Un smart contract est un court programme écrit dans la blockchain lors d'une transaction et qui peuvent réagir aux transactions qui lui sont envoyées en exécutant une logique arbitraire. Chaque smart contract a également son propre état arbitraire qui peut être mis à jour sur n'importe quelle transaction et peut contenir n'importe quelle donnée. 
 
+Au début, la méthode de consensus était le proof of work, comme le bitcoin. Mais en 2017, Ethereum a commencé à migrer vers un algorithme de consensus appelé `proof of stake`.
+
+### Pratique
+
+Hot Wallet : Portefeuille en ligne
+Cold Wallet : Portefeuille hors ligne
+
+EtherScan : 
+Cela permet de voir les transactions sur la blockchain Ethereum.
+On peut voir les transactions, les contrats, les comptes, etc avec leur hash.
+
+Un compte sert à stocker des ethers.
+
+Le Gas est une unité de mesure de la puissance de calcul nécessaire pour exécuter une transaction ou un contrat. Elle est inscrite en Gwei soit Giga wei. (10^-18 ether)
+
+
+Réseau de test : https://sepolia.etherscan.io/
+
+#### Explication code tutoriel 
+
+##### Tests
+Voir tutoriel : https://hardhat.org/tutorial/testing-contracts
+
+Code complet : 
+```js
+const { expect } = require("chai");
+
+describe("Token contract", function () {
+  it("Deployment should assign the total supply of tokens to the owner", async function () {
+    const [owner] = await ethers.getSigners();
+
+    const hardhatToken = await ethers.deployContract("Token");
+
+    const ownerBalance = await hardhatToken.balanceOf(owner.address);
+    expect(await hardhatToken.totalSupply()).to.equal(ownerBalance);
+  });
+});
+```
+
+```js
+const [owner] = await ethers.getSigners();
+```
+Un `signer` dans ethers.js est une entité qui représente un compte. Il est utilisé pour envoyer des transactions à des contrats et à d'autres comptes. Ici, nous obtenons une liste des comptes du nœud auquel nous sommes connectés, qui dans ce cas est Hardhat Network, et nous ne gardons que le premier.
+(https://docs.ethers.org/v6/api/providers/#Signer) 
+
+```js	
+const hardhatToken = await ethers.deployContract("Token");
+```
+
+Nous déployons le contrat Token sur le réseau. La fonction deployContract prend le nom du contrat à déployer et les arguments du constructeur du contrat. Ici, nous n'avons pas besoin de passer d'arguments car le constructeur de Token n'en prend pas.
+
+```js
+const ownerBalance = await hardhatToken.balanceOf(owner.address);
+```
+
+Nous vérifions que le propriétaire a reçu la totalité de l'approvisionnement en jetons. Pour ce faire, nous appelons la fonction balanceOf du contrat Token avec l'adresse du propriétaire en tant qu'argument. Cette fonction renvoie le solde du propriétaire.
+
+```js
+expect(await hardhatToken.totalSupply()).to.equal(ownerBalance);
+```
+
+Nous vérifions que le solde du propriétaire est égal à l'approvisionnement total en jetons. Pour ce faire, nous appelons la fonction totalSupply du contrat Token, qui renvoie l'approvisionnement total en jetons, et nous vérifions qu'elle est égale au solde du propriétaire.
+
+Ether.js : 
+
+Une bibliothèque JavaScript qui permet d'interagir avec les contrats et les comptes Ethereum. Elle fournit une API simple et puissante pour envoyer des transactions, déployer des contrats, lire des données de la blockchain, etc.
+
+Avec elle on peut communiquer avec Metamask directement depuis le navigateur.
+
+Exercice : 
+
+Décrire la structure d'un contrat déjà déployé sur la blockchain Ethereum. 
+
+# ERC20 
+
+ERC20 est un standard de contrat intelligent sur la blockchain Ethereum. Il définit un ensemble de règles que les contrats intelligents doivent suivre pour permettre l'émission et le transfert de jetons.
+
+## Créer son Token ERC20
+
+Code : 
+```js
+// SPDX-License-Identifier: Unlicense
+pragma solidity ^0.8.20;
+
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+
+contract BERTRAND is ERC20 {
+    constructor() ERC20("BERTRAND", "BRT") {}
+    function issueToken() public{
+        _mint(msg.sender, 10000*10**18);
+    }
+}
+```
+
+- `pragma solidity ^0.8.20;` : Indique la version du compilateur Solidity à utiliser.
+- `import "@openzeppelin/contracts/token/ERC20/ERC20.sol";` : Importe le contrat ERC20 d'OpenZeppelin.
+- `contract BERTRAND is ERC20` : Déclare un contrat nommé BERTRAND qui hérite du contrat ERC20.
+- `constructor() ERC20("BERTRAND", "BRT") {}` : Définit le constructeur du contrat qui appelle le constructeur du contrat ERC20 avec les paramètres "BERTRAND" et "BRT".
+- `function issueToken() public{ _mint(msg.sender, 10000*10**18); }` : Définit une fonction issueToken qui émet 10 000 jetons à l'adresse de l'appelant.
+
