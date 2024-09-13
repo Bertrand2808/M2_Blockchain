@@ -192,8 +192,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
 contract BERTRAND is ERC20 {
-    constructor() ERC20("BERTRAND", "BRT") {}
-    function issueToken() public{
+    constructor() ERC20("BERTRAND", "BRT") {
         _mint(msg.sender, 10000*10**18);
     }
 }
@@ -203,5 +202,4 @@ contract BERTRAND is ERC20 {
 - `import "@openzeppelin/contracts/token/ERC20/ERC20.sol";` : Importe le contrat ERC20 d'OpenZeppelin.
 - `contract BERTRAND is ERC20` : Déclare un contrat nommé BERTRAND qui hérite du contrat ERC20.
 - `constructor() ERC20("BERTRAND", "BRT") {}` : Définit le constructeur du contrat qui appelle le constructeur du contrat ERC20 avec les paramètres "BERTRAND" et "BRT".
-- `function issueToken() public{ _mint(msg.sender, 10000*10**18); }` : Définit une fonction issueToken qui émet 10 000 jetons à l'adresse de l'appelant.
-
+- `_mint(msg.sender, 10000*10**18);` : Crée 10 000 jetons BRT et les attribue à l'adresse de l'appelant du contrat.
