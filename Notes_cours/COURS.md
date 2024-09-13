@@ -240,6 +240,8 @@ Une fonction déclarée `external` peut permettre aux utilisateurs d'appeler cet
 Cette ligne de code incrémente le solde du compte de l'appelant du contrat de la valeur de l'envoi en ether.
 
 `msg` est une variable globale qui contient des informations sur la transaction en cours, y compris l'adresse de l'expéditeur (msg.sender) et la valeur envoyée (msg.value).
+`sender` est une variable globale qui contient l'adresse du wallet qui a initié la transaction.
+
 
 ```javascript	
 // SPDX-License-Identifier: BUSL-1.1
@@ -318,4 +320,122 @@ contract PriceOracle2 {
 - `uint256 price1 = priceOracle1.price();` : Appelle la fonction price de PriceOracle1 pour obtenir le prix.
 - `uint256 price2 = priceOracle2.price();` : Appelle la fonction price de PriceOracle2 pour obtenir le prix.
 - `return price1 < price2 ? price1 : price2;` : Retourne le prix le plus bas entre price1 et price2.
+
+### ABI Decoding
+
+Une ABI est une interface qui définit comment les fonctions d'un contrat peuvent être appelées depuis l'extérieur. L'ABI décrit les types de données des paramètres et des valeurs de retour des fonctions, ainsi que les noms et les signatures des fonctions.
+
+```js
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.13;
+
+contract Decoder {
+    /* This exercise assumes you know how abi decoding works.
+        1. In the `decodeData` function below, write the logic that decodes a `bytes` data, based on the function parameters
+        2. Return the decoded data
+    */
+    bytes public encoded;
+
+    function decodeData(
+        bytes memory _data
+    ) public pure returns (string memory, uint256) {
+        (string memory word, uint256 num) = abi.decode(_data, (string, uint256));
+        return (word, num);
+    }
+}
+
+```
+
+- `bytes public encoded;` : Déclare une variable publique de type bytes nommée encoded.
+- `function decodeData(` : Déclare une fonction publique nommée decodeData qui prend un paramètre de type bytes.
+- `(string memory word, uint256 num) = abi.decode(_data, (string, uint256));` : Décode les données de type bytes en utilisant l'ABI pour extraire une chaîne de caractères (string) et un entier (uint256).
+
+### Retourner l'adresse d'un contrat
+
+```js
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.13;
+
+contract Deployer {
+    address public deployedContractAddress;
+    function deployContract() public returns (address) {
+        deployedContractAddress = address(new DeployMe(1));
+        return deployedContractAddress;
+    }
+}
+
+contract DeployMe {
+    uint256 public value;
+    [...]
+}
+
+```
+
+- `address public deployedContractAddress;` : Déclare une variable publique de type address nommée deployedContractAddress.
+- `function deployContract() public returns (address) {` : Déclare une fonction publique nommée deployContract qui renvoie une adresse.
+- `deployedContractAddress = address(new DeployMe(1));` : Déploie un nouveau contrat DeployMe avec l'argument 1 qui correspond à la `value` attendue en paramètre et enregistre son adresse dans deployedContractAddress puis la retourne.
+
+### Rejection de l'appel
+
+```js
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.13;
+
+contract DistributeV2 {
+    /*
+        This exercise assumes you know how to sending Ether.
+        1. This contract has some ether in it, distribute it equally among the
+           array of addresses that is passed as argument.
+        2. Write your code in the `distributeEther` function.
+        3. Consider scenarios where one of the recipients rejects the ether transfer, 
+           have a work around for that whereby other recipients still get their transfer
+    */
+
+    constructor() payable {}
+
+    function distributeEther(address[] memory addresses) public {
+        // your code here
+        uint256 amount = address(this).balance / addresses.length;
+        for (uint256 i = 0; i < addresses.length; i++) {
+            (bool success, ) = payable(addresses[i]).call{value: amount}("");
+            if (!success) {
+                continue;
+            }
+        }
+    }
+}
+  
+  ```
+
+- `constructor() payable {}` : Déclare un constructeur payable qui permet de recevoir de l'ether lors du déploiement du contrat.
+- `function distributeEther(` : Déclare une fonction publique nommée distributeEther qui prend un tableau d'adresses en paramètre.
+- `uint256 amount = address(this).balance / addresses.length;` : Calcule le montant à distribuer en divisant le solde du contrat par le nombre d'adresses.
+- `(bool success, ) = payable(addresses[i]).call{value: amount}("");` : Envoie le montant à l'adresse i du tableau et stocke le résultat de l'appel dans la variable success.
+
+La variable `bool success` stocke `true` si le transfert a réussi et `false` sinon. 
+
+### Event Trigger 
+
+```js
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.13;
+
+contract Emitter {
+    /* This exercise assumes you know how events work.
+        1. Create a event that emits two non-indexed values; `address` and `uint256`.
+        2. Emit the event in the trigger function below
+        3. The name of the event must be `Trigger`
+    */
+    event Trigger(address, uint256);
+
+    function emitEvent(address _addr, uint256 _num) public {
+        // your code here
+        emit Trigger(_addr, _num);
+    }
+}
+```
+
+- `event Trigger(address, uint256);` : Déclare un événement nommé Trigger qui prend deux valeurs non indexées : une adresse et un entier.
+- `emit Trigger(_addr, _num);` : Émet l'événement Trigger avec les valeurs passées en paramètres.
+
 
