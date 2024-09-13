@@ -10,8 +10,15 @@ contract BlockNumber {
      */
 
     address public lastCaller;
+    uint256 public lastBlockNumber;
 
     function callMe() external {
         /// your code here
+        // On vérifie que la fonction n'a pas déjà été appelée dans le bloc courant
+        require(block.number != lastBlockNumber, "BlockNumber: callMe can only be called once per block");
+        // On stocke l'appelant de la fonction
+        lastCaller = msg.sender;
+        // On stocke le numéro du bloc courant
+        lastBlockNumber = block.number;
     }
 }

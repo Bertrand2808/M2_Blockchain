@@ -125,8 +125,20 @@ Réseau de test : https://sepolia.etherscan.io/
 
 #### Explication code tutoriel 
 
+##### Commandes npx 
+
+`npx` est un outil qui permet d'exécuter des commandes npm sans avoir à les installer localement.
+
+`npx hardhat init` : Initialise un projet Hardhat
+`npx hardhat compile` : Compile le code
+`npx hardhat test` : Exécute les tests
+`npx hardhat ignition deploy` : Déploie le contrat en local 
+`npx hardhat ignition deploy --network <nom réseau>` : Déploie le contrat sur le réseau spécifié
+
+
 ##### Tests
 Voir tutoriel : https://hardhat.org/tutorial/testing-contracts
+
 
 Code complet : 
 ```js
@@ -203,3 +215,107 @@ contract BERTRAND is ERC20 {
 - `contract BERTRAND is ERC20` : Déclare un contrat nommé BERTRAND qui hérite du contrat ERC20.
 - `constructor() ERC20("BERTRAND", "BRT") {}` : Définit le constructeur du contrat qui appelle le constructeur du contrat ERC20 avec les paramètres "BERTRAND" et "BRT".
 - `_mint(msg.sender, 10000*10**18);` : Crée 10 000 jetons BRT et les attribue à l'adresse de l'appelant du contrat.
+
+`Adresse du Token Bertrand`: 0x8c21Deac95B8f1DF3cf5f7c565CD5bfc00f6e315
+
+![alt text](image-2.png)
+Sur métamask : 
+![alt text](image-3.png)
+
+# Exercices Solidity 
+
+## Notes
+
+```javascript	
+function addEther() external payable{}
+```
+
+Une fonction déclarée `external` peut permettre aux utilisateurs d'appeler cette fonction depuis l'extérieur du contrat. La fonction est également `payable`, ce qui signifie qu'elle peut recevoir de l'ether lorsqu'elle est appelée.
+
+
+```js
+  balances[msg.sender] += msg.value;
+```
+
+Cette ligne de code incrémente le solde du compte de l'appelant du contrat de la valeur de l'envoi en ether.
+
+`msg` est une variable globale qui contient des informations sur la transaction en cours, y compris l'adresse de l'expéditeur (msg.sender) et la valeur envoyée (msg.value).
+
+```javascript	
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.13;
+
+contract BlockNumber {
+    address public lastCaller;
+    uint256 public lastBlockNumber;
+    function callMe() external {
+        require(block.number != lastBlockNumber, "BlockNumber: callMe can only be called once per block");
+        lastCaller = msg.sender;
+        lastBlockNumber = block.number;
+    }
+}
+```
+
+- `adresse public lastCaller` : Déclare une variable publique qui stocke l'adresse du dernier appelant de la fonction callMe.
+- `uint256 public lastBlockNumber` : Déclare une variable publique qui stocke le numéro du dernier bloc dans lequel la fonction callMe a été appelée.
+- `function callMe() external` : Déclare une fonction publique qui peut être appelée depuis l'extérieur du contrat.
+- `require(block.number != lastBlockNumber, "BlockNumber: callMe can only be called once per block")` : Vérifie que la fonction callMe n'a pas déjà été appelée dans le bloc actuel en comparant le numéro de bloc actuel (block.number) avec le dernier numéro de bloc enregistré (lastBlockNumber).
+- `lastCaller = msg.sender` : Enregistre l'adresse de l'appelant de la fonction callMe dans la variable lastCaller.
+- `lastBlockNumber = block.number` : Enregistre le numéro de bloc actuel dans la variable lastBlockNumber.
+
+A noter que un script Sol de 80 lignes de code pèse entre 1 et 4ko.
+
+### Appel de fonction 
+
+```js
+// SPDX-License-Identifier: BUSL-1.1
+pragma solidity ^0.8.13;
+
+contract CrossContract {
+    function getLowerPrice(
+        address _priceOracle1,
+        address _priceOracle2
+    ) external view returns (uint256) {
+        // your code here
+        PriceOracle1 priceOracle1 = PriceOracle1(_priceOracle1);
+        PriceOracle2 priceOracle2 = PriceOracle2(_priceOracle2);
+
+        uint256 price1 = priceOracle1.price();
+        uint256 price2 = priceOracle2.price();
+
+        return price1 < price2 ? price1 : price2;
+    }
+}
+
+contract PriceOracle1 {
+    uint256 private _price;
+
+    function setPrice(uint256 newPrice) public {
+        _price = newPrice;
+    }
+
+    function price() external view returns (uint256) {
+        return _price;
+    }
+}
+
+contract PriceOracle2 {
+    uint256 private _price;
+
+    function setPrice(uint256 newPrice) public {
+        _price = newPrice;
+    }
+
+    function price() external view returns (uint256) {
+        return _price;
+    }
+}
+```
+
+- `function getLowerPrice(` : Déclare une fonction publique nommée getLowerPrice qui prend deux adresses en paramètres.
+- `PriceOracle1 priceOracle1 = PriceOracle1(_priceOracle1);` : Crée une instance de PriceOracle1 à partir de l'adresse _priceOracle1.
+- `PriceOracle2 priceOracle2 = PriceOracle2(_priceOracle2);` : Crée une instance de PriceOracle2 à partir de l'adresse _priceOracle2.
+- `uint256 price1 = priceOracle1.price();` : Appelle la fonction price de PriceOracle1 pour obtenir le prix.
+- `uint256 price2 = priceOracle2.price();` : Appelle la fonction price de PriceOracle2 pour obtenir le prix.
+- `return price1 < price2 ? price1 : price2;` : Retourne le prix le plus bas entre price1 et price2.
+

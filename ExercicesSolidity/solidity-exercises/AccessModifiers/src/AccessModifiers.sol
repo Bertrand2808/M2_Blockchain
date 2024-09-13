@@ -12,7 +12,7 @@ contract Child is Parent {
         1. `_value` variable is private and can only be accessed by `Parent` contract. Make the variable accessible
            to `Parent` and `Child` contract ONLY.
     */
-
+    uint256 private _value;
     function setValue(uint256 newValue) public {
         _value = newValue;
     }
