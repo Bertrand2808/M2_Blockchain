@@ -439,3 +439,13 @@ contract Emitter {
 - `emit Trigger(_addr, _num);` : Émet l'événement Trigger avec les valeurs passées en paramètres.
 
 
+# NFT 
+
+`Factory` : Permet de définir et créer des NFTs pour nous. 
+
+`ERC721` : Standard de contrat intelligent pour les NFTs.
+
+`IPFS` : Système de stockage de données décentralisé qui permet de stocker des documents, des images, des vidéos, pour qu'ils ne soient jamais supprimés (avec une contrepartie de laisser tourner un noeud IPFS pour participer au réseau).
+
+On ne stocke pas sur chaine les données des NFTs, on les stockes hors chaine. 
+
